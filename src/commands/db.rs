@@ -26,6 +26,10 @@ use diesel::ExpressionMethods;
 use diesel::JoinOnDsl;
 use diesel::QueryDsl;
 use diesel::RunQueryDsl;
+use diesel_migrations::embed_migrations;
+use diesel_migrations::EmbeddedMigrations;
+use diesel_migrations::HarnessWithOutput;
+use diesel_migrations::MigrationHarness;
 use itertools::Itertools;
 use log::debug;
 use log::info;
@@ -39,7 +43,7 @@ use crate::log::JobResult;
 use crate::package::Script;
 use crate::schema;
 
-diesel_migrations::embed_migrations!("migrations");
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
 /// Implementation of the "db" subcommand
 pub fn db(
@@ -149,8 +153,11 @@ fn cli(db_connection_config: DbConnectionConfig<'_>, matches: &ArgMatches) -> Re
 }
 
 fn setup(conn_cfg: DbConnectionConfig<'_>) -> Result<()> {
-    let conn = conn_cfg.establish_connection()?;
-    embedded_migrations::run_with_output(&conn, &mut std::io::stdout()).map_err(Error::from)
+    let mut conn = conn_cfg.establish_connection()?;
+    HarnessWithOutput::write_to_stdout(&mut conn)
+        .run_pending_migrations(MIGRATIONS)
+        .map(|_| ())
+        .map_err(Error::from)
 }
 
 /// Implementation of the "db artifacts" subcommand
