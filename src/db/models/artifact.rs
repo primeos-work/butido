@@ -25,7 +25,7 @@ use crate::schema::artifacts;
 use crate::schema::artifacts::*;
 
 #[derive(Debug, Identifiable, Queryable, Associations)]
-#[belongs_to(Job)]
+#[diesel(belongs_to(Job))]
 pub struct Artifact {
     pub id: i32,
     pub path: String,
@@ -33,7 +33,7 @@ pub struct Artifact {
 }
 
 #[derive(Insertable)]
-#[table_name = "artifacts"]
+#[diesel(table_name = artifacts)]
 struct NewArtifact<'a> {
     pub path: &'a str,
     pub job_id: i32,

@@ -24,7 +24,7 @@ pub struct GitHash {
 }
 
 #[derive(Insertable)]
-#[table_name = "githashes"]
+#[diesel(table_name = githashes)]
 struct NewGitHash<'a> {
     pub hash: &'a str,
 }

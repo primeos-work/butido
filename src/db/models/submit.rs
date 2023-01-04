@@ -22,9 +22,9 @@ use crate::schema::submits;
 use crate::schema::submits::*;
 
 #[derive(Clone, Debug, Eq, PartialEq, Identifiable, Queryable, Associations)]
-#[belongs_to(Package, foreign_key = "requested_package_id")]
-#[belongs_to(Image, foreign_key = "requested_image_id")]
-#[table_name = "submits"]
+#[diesel(belongs_to(Package, foreign_key = requested_package_id))]
+#[diesel(belongs_to(Image, foreign_key = requested_image_id))]
+#[diesel(table_name = submits)]
 pub struct Submit {
     pub id: i32,
     pub uuid: ::uuid::Uuid,
@@ -35,7 +35,7 @@ pub struct Submit {
 }
 
 #[derive(Insertable)]
-#[table_name = "submits"]
+#[diesel(table_name = submits)]
 struct NewSubmit<'a> {
     pub uuid: &'a ::uuid::Uuid,
     pub submit_time: &'a NaiveDateTime,

@@ -20,8 +20,8 @@ use crate::schema::releases;
 use crate::schema::releases::*;
 
 #[derive(Debug, Identifiable, Queryable, Associations)]
-#[belongs_to(Artifact)]
-#[belongs_to(ReleaseStore)]
+#[diesel(belongs_to(Artifact))]
+#[diesel(belongs_to(ReleaseStore))]
 pub struct Release {
     pub id: i32,
     pub artifact_id: i32,
@@ -30,7 +30,7 @@ pub struct Release {
 }
 
 #[derive(Insertable)]
-#[table_name = "releases"]
+#[diesel(table_name = releases)]
 struct NewRelease<'a> {
     pub artifact_id: i32,
     pub release_date: &'a NaiveDateTime,

@@ -24,7 +24,7 @@ pub struct Image {
 }
 
 #[derive(Insertable)]
-#[table_name = "images"]
+#[diesel(table_name = images)]
 struct NewImage<'a> {
     pub name: &'a str,
 }
