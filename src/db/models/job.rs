@@ -22,11 +22,11 @@ use crate::schema::jobs::*;
 use crate::util::docker::ContainerHash;
 
 #[derive(Debug, Eq, PartialEq, Identifiable, Queryable, Associations)]
-#[belongs_to(Submit)]
-#[belongs_to(Endpoint)]
-#[belongs_to(Package)]
-#[belongs_to(Image)]
-#[table_name = "jobs"]
+#[diesel(belongs_to(Submit))]
+#[diesel(belongs_to(Endpoint))]
+#[diesel(belongs_to(Package))]
+#[diesel(belongs_to(Image))]
+#[diesel(table_name = jobs)]
 pub struct Job {
     pub id: i32,
     pub submit_id: i32,
@@ -40,7 +40,7 @@ pub struct Job {
 }
 
 #[derive(Debug, Insertable)]
-#[table_name = "jobs"]
+#[diesel(table_name = jobs)]
 struct NewJob<'a> {
     pub submit_id: i32,
     pub endpoint_id: i32,

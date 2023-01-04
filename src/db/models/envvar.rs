@@ -18,7 +18,7 @@ use crate::schema::envvars::*;
 use crate::util::EnvironmentVariableName;
 
 #[derive(Debug, Identifiable, Queryable)]
-#[table_name = "envvars"]
+#[diesel(table_name = envvars)]
 pub struct EnvVar {
     pub id: i32,
     pub name: String,
@@ -26,7 +26,7 @@ pub struct EnvVar {
 }
 
 #[derive(Insertable)]
-#[table_name = "envvars"]
+#[diesel(table_name = envvars)]
 struct NewEnvVar<'a> {
     pub name: &'a str,
     pub value: &'a str,

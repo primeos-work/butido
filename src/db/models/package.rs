@@ -26,7 +26,7 @@ pub struct Package {
 }
 
 #[derive(Insertable)]
-#[table_name = "packages"]
+#[diesel(table_name = packages)]
 struct NewPackage<'a> {
     pub name: &'a str,
     pub version: &'a str,

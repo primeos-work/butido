@@ -20,14 +20,14 @@ use crate::schema::release_stores;
 use crate::schema;
 
 #[derive(Debug, Identifiable, Queryable)]
-#[table_name = "release_stores"]
+#[diesel(table_name = release_stores)]
 pub struct ReleaseStore {
     pub id: i32,
     pub store_name: String,
 }
 
 #[derive(Insertable)]
-#[table_name = "release_stores"]
+#[diesel(table_name = release_stores)]
 struct NewReleaseStore<'a> {
     pub store_name : &'a str,
 }

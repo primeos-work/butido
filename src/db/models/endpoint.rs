@@ -24,7 +24,7 @@ pub struct Endpoint {
 }
 
 #[derive(Insertable)]
-#[table_name = "endpoints"]
+#[diesel(table_name = endpoints)]
 struct NewEndpoint<'a> {
     pub name: &'a str,
 }
