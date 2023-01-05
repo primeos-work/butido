@@ -12,6 +12,8 @@
 
 use std::io::Write;
 use std::path::PathBuf;
+use std::sync::Arc;
+use std::sync::Mutex;
 
 use anyhow::anyhow;
 use anyhow::Context;
@@ -141,6 +143,8 @@ async fn new_release(
     let interactive = !matches.is_present("noninteractive");
 
     let now = chrono::offset::Local::now().naive_local();
+    // TODO: Find a proper solution to resolve: `error: captured variable cannot escape `FnMut` closure body`:
+    let conn = Arc::new(Mutex::new(conn));
     let any_err = arts.into_iter()
         .map(|art| async {
             let art = art; // ensure it is moved
@@ -182,7 +186,7 @@ async fn new_release(
                     .map_err(Error::from)
                     .and_then(|_| {
                         debug!("Updating {:?} to set released = true", art);
-                        let rel = crate::db::models::Release::create(&mut conn, &art, &now, &release_store)?;
+                        let rel = crate::db::models::Release::create(&mut *conn.clone().lock().unwrap(), &art, &now, &release_store)?;
                         debug!("Release object = {:?}", rel);
                         Ok(dest_path)
                     })
