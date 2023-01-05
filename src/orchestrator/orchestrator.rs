@@ -14,6 +14,7 @@ use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::sync::Mutex;
 
 use anyhow::Error;
 use anyhow::Context;
@@ -164,7 +165,7 @@ pub struct Orchestrator<'a> {
     jobdag: Dag,
     config: &'a Configuration,
     repository: Repository,
-    database: Arc<PgConnection>,
+    database: Arc<Mutex<PgConnection>>,
 }
 
 #[derive(TypedBuilder)]
@@ -175,7 +176,7 @@ pub struct OrchestratorSetup<'a> {
     release_stores: Vec<Arc<ReleaseStore>>,
     source_cache: SourceCache,
     jobdag: Dag,
-    database: Arc<PgConnection>,
+    database: Arc<Mutex<PgConnection>>,
     submit: dbmodels::Submit,
     log_dir: Option<PathBuf>,
     config: &'a Configuration,
@@ -455,7 +456,7 @@ struct TaskPreparation<'a> {
     scheduler: &'a EndpointScheduler,
     staging_store: Arc<RwLock<StagingStore>>,
     release_stores: Vec<Arc<ReleaseStore>>,
-    database: Arc<PgConnection>,
+    database: Arc<Mutex<PgConnection>>,
 }
 
 /// Helper type for executing one job task
@@ -473,7 +474,7 @@ struct JobTask<'a> {
     scheduler: &'a EndpointScheduler,
     staging_store: Arc<RwLock<StagingStore>>,
     release_stores: Vec<Arc<ReleaseStore>>,
-    database: Arc<PgConnection>,
+    database: Arc<Mutex<PgConnection>>,
 
     /// Channel where the dependencies arrive
     receiver: Receiver<JobResult>,
