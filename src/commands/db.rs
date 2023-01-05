@@ -166,7 +166,7 @@ fn artifacts(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<(
 
     let csv = matches.is_present("csv");
     let hdrs = crate::commands::util::mk_header(vec!["Path", "Released", "Job"]);
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let data = matches
         .value_of("job_uuid")
         .map(uuid::Uuid::parse_str)
@@ -176,7 +176,7 @@ fn artifacts(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<(
                 .inner_join(schema::jobs::table)
                 .left_join(schema::releases::table)
                 .filter(schema::jobs::dsl::uuid.eq(job_uuid))
-                .load::<(models::Artifact, models::Job, Option<models::Release>)>(&conn)
+                .load::<(models::Artifact, models::Job, Option<models::Release>)>(&mut conn)
                 .map_err(Error::from)
         })
         .unwrap_or_else(|| {
@@ -184,7 +184,7 @@ fn artifacts(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<(
                 .inner_join(schema::jobs::table)
                 .left_join(schema::releases::table)
                 .order_by(schema::artifacts::id.asc())
-                .load::<(models::Artifact, models::Job, Option<models::Release>)>(&conn)
+                .load::<(models::Artifact, models::Job, Option<models::Release>)>(&mut conn)
                 .map_err(Error::from)
         })?
         .into_iter()
@@ -215,9 +215,9 @@ fn envvars(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()>
 
     let csv = matches.is_present("csv");
     let hdrs = crate::commands::util::mk_header(vec!["Name", "Value"]);
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let data = dsl::envvars
-        .load::<models::EnvVar>(&conn)?
+        .load::<models::EnvVar>(&mut conn)?
         .into_iter()
         .map(|evar| vec![evar.name, evar.value])
         .collect::<Vec<_>>();
@@ -237,9 +237,9 @@ fn images(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
 
     let csv = matches.is_present("csv");
     let hdrs = crate::commands::util::mk_header(vec!["Name"]);
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let data = dsl::images
-        .load::<models::Image>(&conn)?
+        .load::<models::Image>(&mut conn)?
         .into_iter()
         .map(|image| vec![image.name])
         .collect::<Vec<_>>();
@@ -255,7 +255,7 @@ fn images(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
 
 /// Implementation of the "db submit" subcommand
 fn submit(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> {
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let submit_id = matches.value_of("submit")
         .map(uuid::Uuid::from_str)
         .transpose()
@@ -272,7 +272,7 @@ fn submit(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
         .inner_join(schema::jobs::table)
         .filter(schema::submits::uuid.eq(&submit_id))
         .select(schema::jobs::all_columns)
-        .load::<models::Job>(&conn)
+        .load::<models::Job>(&mut conn)
         .with_context(|| anyhow!("Loading jobs for submit = {}", submit_id))?;
 
     let n_jobs = jobs.len();
@@ -347,7 +347,7 @@ fn submits(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()>
     let csv = matches.is_present("csv");
     let limit = matches.value_of("limit").map(i64::from_str).transpose()?;
     let hdrs = crate::commands::util::mk_header(vec!["Time", "UUID", "For Package", "For Package Version"]);
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let commit = matches.value_of("for-commit");
 
     let query = schema::submits::table
@@ -389,7 +389,7 @@ fn submits(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()>
         };
 
         // Only load the IDs of the submits, so we can later use them to filter the submits
-        let submit_ids = query.select(schema::submits::id).load::<i32>(&conn)?;
+        let submit_ids = query.select(schema::submits::id).load::<i32>(&mut conn)?;
 
         schema::submits::table
             .order_by(schema::submits::id.desc()) // required for the --limit implementation
@@ -398,7 +398,7 @@ fn submits(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()>
             })
             .filter(schema::submits::id.eq_any(submit_ids))
             .select((schema::submits::all_columns, schema::packages::all_columns))
-            .load::<(models::Submit, models::Package)>(&conn)?
+            .load::<(models::Submit, models::Package)>(&mut conn)?
     } else if let Some(pkgname) = matches.value_of("for_pkg") {
         // Get all submits _for_ the package
         let query = query
@@ -413,7 +413,7 @@ fn submits(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()>
             query
         }
         .select((schema::submits::all_columns, schema::packages::all_columns))
-        .load::<(models::Submit, models::Package)>(&conn)?
+        .load::<(models::Submit, models::Package)>(&mut conn)?
     } else if let Some(limit) = limit {
         query
             .inner_join({
@@ -421,13 +421,13 @@ fn submits(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()>
             })
             .select((schema::submits::all_columns, schema::packages::all_columns))
             .limit(limit)
-            .load::<(models::Submit, models::Package)>(&conn)?
+            .load::<(models::Submit, models::Package)>(&mut conn)?
     } else {
         query.inner_join({
                 schema::packages::table.on(schema::submits::requested_package_id.eq(schema::packages::id))
             })
             .select((schema::submits::all_columns, schema::packages::all_columns))
-            .load::<(models::Submit, models::Package)>(&conn)?
+            .load::<(models::Submit, models::Package)>(&mut conn)?
     };
 
     // Helper to map (Submit, Package) -> Vec<String>
@@ -463,7 +463,7 @@ fn jobs(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> {
         "Package",
         "Version",
     ]);
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let older_than_filter = get_date_filter("older_than", matches)?;
     let newer_than_filter = get_date_filter("newer_than", matches)?;
 
@@ -491,7 +491,7 @@ fn jobs(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> {
             })
             .inner_join(schema::job_envs::table)
             .select(schema::job_envs::job_id)
-            .load::<i32>(&conn)?;
+            .load::<i32>(&mut conn)?;
 
         debug!("Filtering for these IDs (because of env filter): {:?}", jids);
         sel = sel.filter(schema::jobs::dsl::id.eq_any(jids));
@@ -519,7 +519,7 @@ fn jobs(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> {
 
     let data = sel
         .order_by(schema::jobs::id.desc()) // required for the --limit implementation
-        .load::<(models::Job, models::Submit, models::Endpoint, models::Package)>(&conn)?
+        .load::<(models::Job, models::Submit, models::Endpoint, models::Package)>(&mut conn)?
         .into_iter()
         .rev() // required for the --limit implementation
         .map(|(job, submit, ep, package)| {
@@ -557,7 +557,7 @@ fn job(conn_cfg: DbConnectionConfig<'_>, config: &Configuration, matches: &ArgMa
     let show_log = matches.is_present("show_log");
     let show_script = matches.is_present("show_script");
     let csv = matches.is_present("csv");
-    let conn = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let job_uuid = matches
         .value_of("job_uuid")
         .map(uuid::Uuid::parse_str)
@@ -576,7 +576,7 @@ fn job(conn_cfg: DbConnectionConfig<'_>, config: &Configuration, matches: &ArgMa
             models::Endpoint,
             models::Package,
             models::Image,
-        )>(&conn)?;
+        )>(&mut conn)?;
 
     trace!("Parsing log");
     let parsed_log = crate::log::ParsedLog::from_str(&data.0.log_text)?;
@@ -614,7 +614,7 @@ fn job(conn_cfg: DbConnectionConfig<'_>, config: &Configuration, matches: &ArgMa
             Some({
                 models::JobEnv::belonging_to(&data.0)
                     .inner_join(schema::envvars::table)
-                    .load::<(models::JobEnv, models::EnvVar)>(&conn)?
+                    .load::<(models::JobEnv, models::EnvVar)>(&mut conn)?
                     .into_iter()
                     .map(|tpl| tpl.1)
                     .enumerate()
@@ -725,7 +725,7 @@ fn job(conn_cfg: DbConnectionConfig<'_>, config: &Configuration, matches: &ArgMa
 
 /// Implementation of the subcommand "db log-of"
 fn log_of(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> {
-    let conn   = conn_cfg.establish_connection()?;
+    let mut conn = conn_cfg.establish_connection()?;
     let job_uuid = matches
         .value_of("job_uuid")
         .map(uuid::Uuid::parse_str)
@@ -737,7 +737,7 @@ fn log_of(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
     schema::jobs::table
         .filter(schema::jobs::dsl::uuid.eq(job_uuid))
         .select(schema::jobs::dsl::log_text)
-        .first::<String>(&conn)
+        .first::<String>(&mut conn)
         .map_err(Error::from)
         .and_then(|s| crate::log::ParsedLog::from_str(&s))?
         .into_iter()
@@ -748,8 +748,8 @@ fn log_of(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
 
 /// Implementation of the "db releases" subcommand
 fn releases(conn_cfg: DbConnectionConfig<'_>, config: &Configuration, matches: &ArgMatches) -> Result<()> {
-    let csv    = matches.is_present("csv");
-    let conn   = conn_cfg.establish_connection()?;
+    let csv = matches.is_present("csv");
+    let mut conn = conn_cfg.establish_connection()?;
     let header = crate::commands::util::mk_header(["Package", "Version", "Date", "Path"].to_vec());
     let mut query = schema::jobs::table
         .inner_join(schema::packages::table)
@@ -787,7 +787,7 @@ fn releases(conn_cfg: DbConnectionConfig<'_>, config: &Configuration, matches: &
             let rst = schema::release_stores::all_columns;
             (art, pac, rel, rst)
         })
-        .load::<(models::Artifact, models::Package, models::Release, models::ReleaseStore)>(&conn)?
+        .load::<(models::Artifact, models::Package, models::Release, models::ReleaseStore)>(&mut conn)?
         .into_iter()
         .filter_map(|(art, pack, rel, rstore)| {
             let p = config.releases_directory().join(rstore.store_name).join(art.path);

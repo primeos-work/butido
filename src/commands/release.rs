@@ -62,7 +62,7 @@ async fn new_release(
 
     debug!("Release called for: {:?} {:?}", pname, pvers);
 
-    let conn = db_connection_config.establish_connection()?;
+    let mut conn = db_connection_config.establish_connection()?;
     let submit_uuid = matches
         .value_of("submit_uuid")
         .map(uuid::Uuid::parse_str)
@@ -72,7 +72,7 @@ async fn new_release(
 
     let submit = crate::schema::submits::dsl::submits
         .filter(crate::schema::submits::dsl::uuid.eq(submit_uuid))
-        .first::<dbmodels::Submit>(&conn)?;
+        .first::<dbmodels::Submit>(&mut conn)?;
     debug!("Found Submit: {:?}", submit_uuid);
 
     let arts = {
@@ -91,7 +91,7 @@ async fn new_release(
                     "Query: {:?}",
                     diesel::debug_query::<diesel::pg::Pg, _>(&query)
                 );
-                query.load::<dbmodels::Artifact>(&conn)?
+                query.load::<dbmodels::Artifact>(&mut conn)?
             }
             (Some(name), None) => {
                 let query = sel.filter(crate::schema::packages::name.eq(name));
@@ -99,7 +99,7 @@ async fn new_release(
                     "Query: {:?}",
                     diesel::debug_query::<diesel::pg::Pg, _>(&query)
                 );
-                query.load::<dbmodels::Artifact>(&conn)?
+                query.load::<dbmodels::Artifact>(&mut conn)?
             }
             (None, Some(vers)) => {
                 let query = sel.filter(crate::schema::packages::version.like(vers));
@@ -107,14 +107,14 @@ async fn new_release(
                     "Query: {:?}",
                     diesel::debug_query::<diesel::pg::Pg, _>(&query)
                 );
-                query.load::<dbmodels::Artifact>(&conn)?
+                query.load::<dbmodels::Artifact>(&mut conn)?
             }
             (None, None) => {
                 debug!(
                     "Query: {:?}",
                     diesel::debug_query::<diesel::pg::Pg, _>(&sel)
                 );
-                sel.load::<dbmodels::Artifact>(&conn)?
+                sel.load::<dbmodels::Artifact>(&mut conn)?
             }
         }
     };
@@ -231,7 +231,7 @@ pub async fn rm_release(
     let pvers = matches.value_of("package_version").map(String::from).unwrap(); // safe by clap
     debug!("Remove Release called for: {:?} {:?}", pname, pvers);
 
-    let conn = db_connection_config.establish_connection()?;
+    let mut conn = db_connection_config.establish_connection()?;
 
     let (release, artifact) = crate::schema::jobs::table
         .inner_join(crate::schema::packages::table)
@@ -245,7 +245,7 @@ pub async fn rm_release(
         .filter(crate::schema::release_stores::dsl::store_name.eq(&release_store_name))
         .order(crate::schema::releases::dsl::release_date.desc())
         .select((crate::schema::releases::all_columns, crate::schema::artifacts::all_columns))
-        .first::<(crate::db::models::Release, crate::db::models::Artifact)>(&conn)?;
+        .first::<(crate::db::models::Release, crate::db::models::Artifact)>(&mut conn)?;
 
     let artifact_path = config.releases_directory().join(release_store_name).join(&artifact.path);
     if !artifact_path.is_file() {
@@ -261,7 +261,7 @@ pub async fn rm_release(
     tokio::fs::remove_file(&artifact_path).await?;
     info!("File removed");
 
-    diesel::delete(&release).execute(&conn)?;
+    diesel::delete(&release).execute(&mut conn)?;
     info!("Release deleted from database");
 
     Ok(())
