@@ -55,7 +55,7 @@ struct NewJob<'a> {
 impl Job {
     #[allow(clippy::too_many_arguments)]
     pub fn create(
-        database_connection: &PgConnection,
+        database_connection: &mut PgConnection,
         job_uuid: &::uuid::Uuid,
         submit: &Submit,
         endpoint: &Endpoint,
@@ -96,7 +96,7 @@ impl Job {
         })
     }
 
-    pub fn env(&self, database_connection: &PgConnection) -> Result<Vec<crate::db::models::EnvVar>> {
+    pub fn env(&self, database_connection: &mut PgConnection) -> Result<Vec<crate::db::models::EnvVar>> {
         use crate::schema;
 
         schema::job_envs::table

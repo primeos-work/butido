@@ -39,7 +39,7 @@ struct NewRelease<'a> {
 
 impl Release {
     pub fn create<'a>(
-        database_connection: &PgConnection,
+        database_connection: &mut PgConnection,
         art: &Artifact,
         date: &'a NaiveDateTime,
         store: &'a ReleaseStore,

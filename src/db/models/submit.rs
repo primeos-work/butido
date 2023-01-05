@@ -46,7 +46,7 @@ struct NewSubmit<'a> {
 
 impl Submit {
     pub fn create(
-        database_connection: &PgConnection,
+        database_connection: &mut PgConnection,
         submit_datetime: &NaiveDateTime,
         submit_id: &::uuid::Uuid,
         requested_image: &Image,
@@ -75,7 +75,7 @@ impl Submit {
         })
     }
 
-    pub fn with_id(database_connection: &PgConnection, submit_id: &::uuid::Uuid) -> Result<Submit> {
+    pub fn with_id(database_connection: &mut PgConnection, submit_id: &::uuid::Uuid) -> Result<Submit> {
         dsl::submits
             .filter(submits::uuid.eq(submit_id))
             .first::<Submit>(database_connection)

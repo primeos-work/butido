@@ -321,7 +321,7 @@ pub async fn build(
     trace!("Database jobs for Package, GitHash, Image finished successfully");
     trace!("Creating Submit in database");
     let submit = Submit::create(
-        &database_connection,
+        &mut database_connection,
         &now,
         &submit_id,
         &db_image,
