@@ -33,7 +33,7 @@ struct NewReleaseStore<'a> {
 }
 
 impl ReleaseStore {
-    pub fn create(database_connection: &PgConnection, name: &str) -> Result<ReleaseStore> {
+    pub fn create(database_connection: &mut PgConnection, name: &str) -> Result<ReleaseStore> {
         let new_relstore = NewReleaseStore {
             store_name: name,
         };

@@ -34,7 +34,7 @@ struct NewEnvVar<'a> {
 
 impl EnvVar {
     pub fn create_or_fetch(
-        database_connection: &PgConnection,
+        database_connection: &mut PgConnection,
         k: &EnvironmentVariableName,
         v: &str,
     ) -> Result<EnvVar> {

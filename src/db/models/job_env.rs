@@ -34,7 +34,7 @@ struct NewJobEnv {
 }
 
 impl JobEnv {
-    pub fn create(database_connection: &PgConnection, job: &Job, env: &EnvVar) -> Result<()> {
+    pub fn create(database_connection: &mut PgConnection, job: &Job, env: &EnvVar) -> Result<()> {
         let new_jobenv = NewJobEnv {
             job_id: job.id,
             env_id: env.id,

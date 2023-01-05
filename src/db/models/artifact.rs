@@ -46,7 +46,7 @@ impl Artifact {
 
     pub fn released(
         self,
-        database_connection: &PgConnection,
+        database_connection: &mut PgConnection,
         release_date: &NaiveDateTime,
         release_store_name: &str,
     ) -> Result<crate::db::models::Release> {
@@ -54,7 +54,7 @@ impl Artifact {
         crate::db::models::Release::create(database_connection, &self, release_date, &rs)
     }
 
-    pub fn get_release(&self, database_connection: &PgConnection) -> Result<Option<Release>> {
+    pub fn get_release(&self, database_connection: &mut PgConnection) -> Result<Option<Release>> {
         use crate::schema;
 
         schema::artifacts::table
@@ -67,7 +67,7 @@ impl Artifact {
     }
 
     pub fn create(
-        database_connection: &PgConnection,
+        database_connection: &mut PgConnection,
         art_path: &ArtifactPath,
         job: &Job,
     ) -> Result<Artifact> {
