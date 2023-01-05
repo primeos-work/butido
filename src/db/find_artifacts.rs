@@ -172,7 +172,7 @@ impl<'a> FindArtifacts<'a> {
 
                 let job = tpl.1;
                 let job_env: Vec<(String, String)> = job
-                    .env(&mut *self.database_connection.as_ref().lock().unwrap())?
+                    .env(&mut self.database_connection.as_ref().lock().unwrap())?
                     .into_iter()
                     .map(|var: dbmodels::EnvVar| (var.name, var.value))
                     .collect();
@@ -187,7 +187,7 @@ impl<'a> FindArtifacts<'a> {
                 Ok((_, bl)) => *bl,
             })
             .and_then_ok(|(art, _)| {
-                if let Some(release) = art.get_release(&mut *self.database_connection.as_ref().lock().unwrap())? {
+                if let Some(release) = art.get_release(&mut self.database_connection.as_ref().lock().unwrap())? {
                     Ok((art, Some(release.release_date)))
                 } else {
                     Ok((art, None))
