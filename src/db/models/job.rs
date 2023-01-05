@@ -83,14 +83,14 @@ impl Job {
 
         trace!("Query = {}", diesel::debug_query::<diesel::pg::Pg, _>(&query));
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             query
-                .execute(database_connection)
+                .execute(conn)
                 .context("Creating job in database")?;
 
             dsl::jobs
                 .filter(uuid.eq(job_uuid))
-                .first::<Job>(database_connection)
+                .first::<Job>(conn)
                 .with_context(|| format!("Finding created job in database: {job_uuid}"))
                 .map_err(Error::from)
         })
