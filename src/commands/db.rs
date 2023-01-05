@@ -156,7 +156,7 @@ fn setup(conn_cfg: DbConnectionConfig<'_>) -> Result<()> {
     HarnessWithOutput::write_to_stdout(&mut conn)
         .run_pending_migrations(MIGRATIONS)
         .map(|_| ())
-        .map_err(Error::from)
+        .map_err(|e| anyhow!(e))
 }
 
 /// Implementation of the "db artifacts" subcommand
