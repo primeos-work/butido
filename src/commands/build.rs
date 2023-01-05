@@ -298,9 +298,9 @@ pub async fn build(
     trace!("Setting up database jobs for Package, GitHash, Image");
     let database_connection = Arc::new(Mutex::new(database_connection));
     // TODO: Avoid the locking here!:
-    let db_package = async { Package::create_or_fetch(&mut *database_connection.clone().lock().unwrap(), package) };
-    let db_githash = async { GitHash::create_or_fetch(&mut *database_connection.clone().lock().unwrap(), &hash_str) };
-    let db_image = async { Image::create_or_fetch(&mut *database_connection.clone().lock().unwrap(), &image_name) };
+    let db_package = async { Package::create_or_fetch(&mut database_connection.clone().lock().unwrap(), package) };
+    let db_githash = async { GitHash::create_or_fetch(&mut database_connection.clone().lock().unwrap(), &hash_str) };
+    let db_image = async { Image::create_or_fetch(&mut database_connection.clone().lock().unwrap(), &image_name) };
     let db_envs = async {
         additional_env
             .clone()
@@ -308,7 +308,7 @@ pub async fn build(
             .map(|(k, v)| async {
                 let k: EnvironmentVariableName = k; // hack to work around move semantics
                 let v: String = v; // hack to work around move semantics
-                EnvVar::create_or_fetch(&mut *database_connection.clone().lock().unwrap(), &k, &v)
+                EnvVar::create_or_fetch(&mut database_connection.clone().lock().unwrap(), &k, &v)
             })
             .collect::<futures::stream::FuturesUnordered<_>>()
             .collect::<Result<Vec<EnvVar>>>()
@@ -324,7 +324,7 @@ pub async fn build(
     trace!("Database jobs for Package, GitHash, Image finished successfully");
     trace!("Creating Submit in database");
     let submit = Submit::create(
-        &mut *database_connection.clone().lock().unwrap(),
+        &mut database_connection.clone().lock().unwrap(),
         &now,
         &submit_id,
         &db_image,

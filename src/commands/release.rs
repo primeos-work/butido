@@ -186,7 +186,7 @@ async fn new_release(
                     .map_err(Error::from)
                     .and_then(|_| {
                         debug!("Updating {:?} to set released = true", art);
-                        let rel = crate::db::models::Release::create(&mut *conn.clone().lock().unwrap(), &art, &now, &release_store)?;
+                        let rel = crate::db::models::Release::create(&mut conn.clone().lock().unwrap(), &art, &now, &release_store)?;
                         debug!("Release object = {:?}", rel);
                         Ok(dest_path)
                     })
