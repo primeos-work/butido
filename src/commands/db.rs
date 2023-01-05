@@ -264,7 +264,7 @@ fn submit(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
     let submit = models::Submit::with_id(&mut conn, &submit_id)
         .with_context(|| anyhow!("Loading submit '{}' from DB", submit_id))?;
 
-    let githash = models::GitHash::with_id(&conn, submit.repo_hash_id)
+    let githash = models::GitHash::with_id(&mut conn, submit.repo_hash_id)
         .with_context(|| anyhow!("Loading GitHash '{}' from DB", submit.repo_hash_id))?;
 
     let jobs = schema::submits::table
@@ -316,11 +316,11 @@ fn submit(conn_cfg: DbConnectionConfig<'_>, matches: &ArgMatches) -> Result<()> 
     let header = crate::commands::util::mk_header(["Job", "Success", "Package", "Version", "Container", "Endpoint", "Image"].to_vec());
     let data = jobs.iter()
         .map(|job| {
-            let image = models::Image::fetch_for_job(&conn, job)?
+            let image = models::Image::fetch_for_job(&mut conn, job)?
                 .ok_or_else(|| anyhow!("Image for job {} not found", job.uuid))?;
-            let package = models::Package::fetch_for_job(&conn, job)?
+            let package = models::Package::fetch_for_job(&mut conn, job)?
                 .ok_or_else(|| anyhow!("Package for job {} not found", job.uuid))?;
-            let endpoint = models::Endpoint::fetch_for_job(&conn, job)?
+            let endpoint = models::Endpoint::fetch_for_job(&mut conn, job)?
                 .ok_or_else(|| anyhow!("Endpoint for job {} not found", job.uuid))?;
 
             Ok(vec![

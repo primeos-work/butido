@@ -136,7 +136,7 @@ async fn new_release(
 
     let staging_base: &PathBuf = &config.staging_directory().join(submit.uuid.to_string());
 
-    let release_store = crate::db::models::ReleaseStore::create(&conn, release_store_name)?;
+    let release_store = crate::db::models::ReleaseStore::create(&mut conn, release_store_name)?;
     let do_update = matches.get_flag("package_do_update");
     let interactive = !matches.get_flag("noninteractive");
 
@@ -182,7 +182,7 @@ async fn new_release(
                     .map_err(Error::from)
                     .and_then(|_| {
                         debug!("Updating {:?} to set released = true", art);
-                        let rel = crate::db::models::Release::create(&conn, &art, &now, &release_store)?;
+                        let rel = crate::db::models::Release::create(&mut conn, &art, &now, &release_store)?;
                         debug!("Release object = {:?}", rel);
                         Ok(dest_path)
                     })
