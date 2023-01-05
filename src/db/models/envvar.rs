@@ -43,15 +43,15 @@ impl EnvVar {
             value: v,
         };
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             diesel::insert_into(envvars::table)
                 .values(&new_envvar)
                 .on_conflict_do_nothing()
-                .execute(database_connection)?;
+                .execute(conn)?;
 
             dsl::envvars
                 .filter(name.eq(k.as_ref()).and(value.eq(v)))
-                .first::<EnvVar>(database_connection)
+                .first::<EnvVar>(conn)
                 .map_err(Error::from)
         })
     }

@@ -50,14 +50,14 @@ impl Release {
             release_store_id: store.id,
         };
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             diesel::insert_into(releases::table)
                 .values(&new_rel)
-                .execute(database_connection)?;
+                .execute(conn)?;
 
             dsl::releases
                 .filter(artifact_id.eq(art.id).and(release_date.eq(date)))
-                .first::<Release>(database_connection)
+                .first::<Release>(conn)
                 .map_err(Error::from)
         })
     }

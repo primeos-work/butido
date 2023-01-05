@@ -33,15 +33,15 @@ impl Endpoint {
     pub fn create_or_fetch(database_connection: &mut PgConnection, ep_name: &EndpointName) -> Result<Endpoint> {
         let new_ep = NewEndpoint { name: ep_name.as_ref() };
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             diesel::insert_into(endpoints::table)
                 .values(&new_ep)
                 .on_conflict_do_nothing()
-                .execute(database_connection)?;
+                .execute(conn)?;
 
             dsl::endpoints
                 .filter(name.eq(ep_name.as_ref()))
-                .first::<Endpoint>(database_connection)
+                .first::<Endpoint>(conn)
                 .map_err(Error::from)
         })
     }

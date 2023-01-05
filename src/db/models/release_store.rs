@@ -38,15 +38,15 @@ impl ReleaseStore {
             store_name: name,
         };
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             diesel::insert_into(schema::release_stores::table)
                 .values(&new_relstore)
                 .on_conflict_do_nothing()
-                .execute(database_connection)?;
+                .execute(conn)?;
 
             schema::release_stores::table
                 .filter(schema::release_stores::store_name.eq(name))
-                .first::<ReleaseStore>(database_connection)
+                .first::<ReleaseStore>(conn)
                 .map_err(Error::from)
         })
     }

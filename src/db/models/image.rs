@@ -38,15 +38,15 @@ impl Image {
             name: image_name.as_ref(),
         };
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             diesel::insert_into(images::table)
                 .values(&new_image)
                 .on_conflict_do_nothing()
-                .execute(database_connection)?;
+                .execute(conn)?;
 
             dsl::images
                 .filter(name.eq(image_name.as_ref()))
-                .first::<Image>(database_connection)
+                .first::<Image>(conn)
                 .map_err(Error::from)
         })
     }

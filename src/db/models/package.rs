@@ -42,11 +42,11 @@ impl Package {
             version: p.version().deref(),
         };
 
-        database_connection.transaction::<_, Error, _>(|| {
+        database_connection.transaction::<_, Error, _>(|conn| {
             diesel::insert_into(packages::table)
                 .values(&new_package)
                 .on_conflict_do_nothing()
-                .execute(database_connection)?;
+                .execute(conn)?;
 
             dsl::packages
                 .filter({
@@ -55,7 +55,7 @@ impl Package {
 
                     name.eq(p_name).and(version.eq(p_vers))
                 })
-                .first::<Package>(database_connection)
+                .first::<Package>(conn)
                 .map_err(Error::from)
         })
     }
