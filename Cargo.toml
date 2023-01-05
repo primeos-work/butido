@@ -79,7 +79,7 @@ which          = "4"
 xdg            = "2"
 
 # Hard-code rand to 0.4.4
-#
+#TODO
 # Reason for this is this dependency chain:
 # diesel -> uuid (0.6) -> rand (0.4)
 # but rand 0.4.5 depends on fuchsia-cprng which has an unclear license
