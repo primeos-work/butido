@@ -78,9 +78,8 @@ impl<'a> DbConnectionConfig<'a> {
         })
     }
 
-    pub fn establish_connection(self) -> Result<PgConnection> {
-        debug!("Trying to connect to database: {:?}", self);
-        let database_uri: String = format!(
+    fn get_database_uri(self) -> String {
+        format!(
             "postgres://{user}:{password}@{host}:{port}/{name}?connect_timeout={timeout}",
             host = self.database_host,
             port = self.database_port,
@@ -88,22 +87,17 @@ impl<'a> DbConnectionConfig<'a> {
             password = self.database_password,
             name = self.database_name,
             timeout = self.database_connection_timeout,
-        );
-        PgConnection::establish(&database_uri).map_err(Error::from)
+        )
+    }
+
+    pub fn establish_connection(self) -> Result<PgConnection> {
+        debug!("Trying to connect to database: {:?}", self);
+        PgConnection::establish(&self.get_database_uri()).map_err(Error::from)
     }
 
     pub fn establish_pool(self) -> Result<Pool<ConnectionManager<PgConnection>>> {
         debug!("Trying to create a connection pool for database: {:?}", self);
-        let database_uri: String = format!( // TODO: Deduplicate
-            "postgres://{user}:{password}@{host}:{port}/{name}?connect_timeout={timeout}",
-            host = self.database_host,
-            port = self.database_port,
-            user = self.database_user,
-            password = self.database_password,
-            name = self.database_name,
-            timeout = self.database_connection_timeout,
-        );
-        let manager = ConnectionManager::<PgConnection>::new(database_uri);
+        let manager = ConnectionManager::<PgConnection>::new(self.get_database_uri());
         Pool::builder()
             .test_on_check_out(true)
             .build(manager)
