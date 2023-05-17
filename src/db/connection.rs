@@ -13,6 +13,8 @@ use anyhow::Result;
 use clap::ArgMatches;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use diesel::r2d2::ConnectionManager;
+use diesel::r2d2::Pool;
 use getset::Getters;
 use tracing::debug;
 
@@ -88,6 +90,24 @@ impl<'a> DbConnectionConfig<'a> {
             timeout = self.database_connection_timeout,
         );
         PgConnection::establish(&database_uri).map_err(Error::from)
+    }
+
+    pub fn establish_pool(self) -> Result<Pool<ConnectionManager<PgConnection>>> {
+        debug!("Trying to create a connection pool for database: {:?}", self);
+        let database_uri: String = format!( // TODO: Deduplicate
+            "postgres://{user}:{password}@{host}:{port}/{name}?connect_timeout={timeout}",
+            host = self.database_host,
+            port = self.database_port,
+            user = self.database_user,
+            password = self.database_password,
+            name = self.database_name,
+            timeout = self.database_connection_timeout,
+        );
+        let manager = ConnectionManager::<PgConnection>::new(database_uri);
+        Pool::builder()
+            .test_on_check_out(true)
+            .build(manager)
+            .map_err(Error::from)
     }
 
 }
