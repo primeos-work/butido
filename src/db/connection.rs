@@ -99,7 +99,7 @@ impl<'a> DbConnectionConfig<'a> {
         debug!("Trying to create a connection pool for database: {:?}", self);
         let manager = ConnectionManager::<PgConnection>::new(self.get_database_uri());
         Pool::builder()
-            .test_on_check_out(true)
+            .min_idle(Some(1))
             .build(manager)
             .map_err(Error::from)
     }
