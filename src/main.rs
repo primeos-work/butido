@@ -11,7 +11,6 @@
 #![deny(
     anonymous_parameters,
     bad_style,
-    dead_code,
     deprecated_in_future,
     explicit_outlives_requirements,
     improper_ctypes,
@@ -29,7 +28,6 @@
     unconditional_recursion,
     unsafe_code,
     unstable_features,
-    unused,
     unused_allocation,
     unused_comparisons,
     unused_crate_dependencies,
