@@ -16,6 +16,7 @@ use std::convert::TryFrom;
 use anyhow::Result;
 use clap::ArgMatches;
 //use resiter::AndThen;
+use tracing::trace;
 
 use crate::package::condition::ConditionCheckable;
 use crate::package::condition::ConditionData;
@@ -27,20 +28,20 @@ use crate::repository::Repository;
 use crate::util::docker::ImageName;
 use crate::util::EnvironmentVariableName;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum DependencyType {
     BUILDTIME,
     RUNTIME,
 }
 
 #[derive(Debug)]
-struct DependenciesTree {
+struct DependenciesNode {
     name: String,
-    dependency_type: DependencyType,
-    dependencies: Vec<DependenciesTree>,
+    //dependency_type: DependencyType,
+    dependencies: Vec<(DependenciesNode, DependencyType)>,
 }
 
-//fn build_dependencies_tree(p: Package, repo: &Repository, conditional_data: &ConditionData<'_>) -> DependenciesTree {
+//fn build_dependencies_tree(p: Package, repo: &Repository, conditional_data: &ConditionData<'_>) -> DependenciesNode {
 //    /// helper fn with bad name to check the dependency condition of a dependency and parse the dependency into a tuple of
 //    /// name and version for further processing
 //    fn process<D: ConditionCheckable + ParseDependency>(
@@ -71,7 +72,17 @@ struct DependenciesTree {
 //            .map(|res| res.map(|(_, name, vers)| (name, vers)));
 //    })
 //}
-fn build_dependencies_tree(p: Package, _repo: &Repository, conditional_data: &ConditionData<'_>) -> DependenciesTree {
+//
+fn print_dependencies_tree(node: DependenciesNode, level: usize, is_runtime_dep: bool) {
+    let ident = "  ".repeat(level);
+    let name = node.name;
+    let suffix = if is_runtime_dep { "*" } else { "" };
+    println!("{ident}- {name}{suffix}");
+    for (node, dep_type) in node.dependencies {
+        print_dependencies_tree(node, level+1, dep_type == DependencyType::RUNTIME);
+    }
+}
+fn build_dependencies_tree(p: Package, repo: &Repository, conditional_data: &ConditionData<'_>) -> DependenciesNode {
         /// helper fn with bad name to check the dependency condition of a dependency and parse the dependency into a tuple of
         /// name and version for further processing
         fn process<D: ConditionCheckable + ParseDependency>(
@@ -126,17 +137,33 @@ fn build_dependencies_tree(p: Package, _repo: &Repository, conditional_data: &Co
         //print!("{:?}", deps);
         for dep in deps {
             println!("{:?}", dep);
-            let tree = DependenciesTree {
-                name: dep.as_ref().unwrap().0.to_string(),
-                dependency_type: dep.unwrap().2,
-                dependencies: Vec::new(),
-            };
-            d.push(tree);
+            let dep = dep.unwrap();
+            let pkgs = repo.find_with_version(&dep.0, &dep.1);
+            if pkgs.is_empty() {
+                panic!("dep not found");
+                //return Err(anyhow!(
+                //    "Dependency of {} {} not found: {} {}",
+                //    p.name(),
+                //    p.version(),
+                //    name,
+                //    constr
+                //));
+            }
+            trace!("Found in repo: {:?}", pkgs);
+            assert!(pkgs.len() == 1);
+            let pkg = pkgs[0];
+            let subtree = build_dependencies_tree(pkg.clone(), repo, conditional_data);
+            //let tree = DependenciesNode {
+            //    name: dep.as_ref().unwrap().0.to_string(),
+            //    dependency_type: dep.unwrap().2,
+            //    dependencies: subtree,
+            //};
+            d.push((subtree, dep.2));
         }
         println!("{:?}", d.len());
-        let tree = DependenciesTree {
+        let tree = DependenciesNode {
             name: p.name().to_string(),
-            dependency_type: DependencyType::BUILDTIME,
+            //dependency_type: DependencyType::BUILDTIME,
             dependencies: d,
         };
         //println!("{:?}", d);
@@ -174,7 +201,7 @@ pub async fn tree_of(matches: &ArgMatches, repo: Repository) -> Result<()> {
         env: &additional_env,
     };
 
-    let tree = repo.packages()
+    let mut tree = repo.packages()
         .filter(|p| pname.as_ref().map(|n| p.name() == n).unwrap_or(true))
         .filter(|p| {
             pvers
@@ -188,7 +215,8 @@ pub async fn tree_of(matches: &ArgMatches, repo: Repository) -> Result<()> {
             tree
         })
         .collect::<Vec<_>>();
-    println!("{:?}", tree[0]);
+    //println!("{:?}", tree[0]);
+    print_dependencies_tree(tree.pop().unwrap(), 0, false);
     Ok(())
        // .and_then_ok(|tree| {
        //     print!("{:?}", tree);
