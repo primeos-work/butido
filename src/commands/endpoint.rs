@@ -15,10 +15,10 @@ use std::io::Write;
 use std::ops::Deref;
 use std::sync::Arc;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 use itertools::Itertools;
 use tokio_stream::StreamExt;

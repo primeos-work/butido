@@ -13,30 +13,30 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::Arc;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use futures::FutureExt;
 use getset::{CopyGetters, Getters};
 use shiplift::Container;
 use shiplift::Docker;
 use shiplift::ExecContainerOptions;
-use tokio::sync::mpsc::UnboundedSender;
 use tokio::sync::RwLock;
+use tokio::sync::mpsc::UnboundedSender;
 use tokio_stream::StreamExt;
 use tracing::{debug, trace};
 use typed_builder::TypedBuilder;
 
 use crate::config::EndpointName;
 use crate::endpoint::EndpointConfiguration;
-use crate::filestore::path::ArtifactPath;
 use crate::filestore::ReleaseStore;
 use crate::filestore::StagingStore;
+use crate::filestore::path::ArtifactPath;
 use crate::job::JobResource;
 use crate::job::RunnableJob;
-use crate::log::buffer_stream_to_line_stream;
 use crate::log::LogItem;
+use crate::log::buffer_stream_to_line_stream;
 use crate::package::Script;
 use crate::util::docker::ContainerHash;
 use crate::util::docker::ImageName;
@@ -180,8 +180,12 @@ impl Endpoint {
                     .with_context(|| anyhow!("Getting API version of endpoint: {}", ep.name))?;
 
                 if !v.contains(&avail.api_version) {
-                    Err(anyhow!("Incompatible Docker API version on endpoint {}: Expected: {}, Available: [{}]",
-                            ep.name(), avail.api_version, v.join(", ")))
+                    Err(anyhow!(
+                        "Incompatible Docker API version on endpoint {}: Expected: {}, Available: [{}]",
+                        ep.name(),
+                        avail.api_version,
+                        v.join(", ")
+                    ))
                 } else {
                     Ok(())
                 }
@@ -838,9 +842,7 @@ impl<'a> StartedContainer<'a> {
                 .map(|line| {
                     trace!(
                         "['{}':{}] Found log line: {:?}",
-                        self.endpoint.name,
-                        self.create_info.id,
-                        line
+                        self.endpoint.name, self.create_info.id, line
                     );
                     line.with_context(|| {
                         anyhow!(

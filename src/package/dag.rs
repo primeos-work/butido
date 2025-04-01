@@ -13,9 +13,9 @@ use std::collections::HashMap;
 use std::io::Result as IoResult;
 use std::io::Write;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use getset::Getters;
 use indicatif::ProgressBar;
 use itertools::Itertools;
@@ -29,12 +29,12 @@ use ptree::TreeItem;
 use resiter::AndThen;
 use tracing::trace;
 
-use crate::package::condition::ConditionCheckable;
-use crate::package::condition::ConditionData;
-use crate::package::dependency::ParseDependency;
 use crate::package::Package;
 use crate::package::PackageName;
 use crate::package::PackageVersion;
+use crate::package::condition::ConditionCheckable;
+use crate::package::condition::ConditionData;
+use crate::package::dependency::ParseDependency;
 use crate::repository::Repository;
 
 #[derive(Debug, Getters)]
@@ -321,13 +321,13 @@ mod tests {
 
     use std::collections::BTreeMap;
 
+    use crate::package::Dependencies;
+    use crate::package::Dependency;
     use crate::package::condition::Condition;
     use crate::package::condition::OneOrMore;
     use crate::package::tests::package;
     use crate::package::tests::pname;
     use crate::package::tests::pversion;
-    use crate::package::Dependencies;
-    use crate::package::Dependency;
     use crate::util::docker::ImageName;
 
     #[test]
@@ -486,9 +486,10 @@ mod tests {
         assert!(r.is_ok());
         let r = r.unwrap();
         let ps = r.all_packages();
-        assert!(ps
-            .iter()
-            .any(|p| *p.name() == pname("p1") && *p.version() == pversion("1")));
+        assert!(
+            ps.iter()
+                .any(|p| *p.name() == pname("p1") && *p.version() == pversion("1"))
+        );
         assert!(ps.iter().any(|p| *p.name() == pname("p2")));
         assert!(ps.iter().any(|p| *p.name() == pname("p4")));
         assert!(ps.iter().any(|p| *p.name() == pname("p3")));
@@ -636,9 +637,10 @@ mod tests {
         assert!(r.is_ok());
         let r = r.unwrap();
         let ps = r.all_packages();
-        assert!(ps
-            .iter()
-            .any(|p| *p.name() == pname("p1") && *p.version() == pversion("1")));
+        assert!(
+            ps.iter()
+                .any(|p| *p.name() == pname("p1") && *p.version() == pversion("1"))
+        );
         assert!(ps.iter().any(|p| *p.name() == pname("p2")));
         assert!(ps.iter().any(|p| *p.name() == pname("p3")));
         assert!(ps.iter().any(|p| *p.name() == pname("p4")));
@@ -748,9 +750,10 @@ mod tests {
         assert!(r.is_ok());
         let r = r.unwrap();
         let ps = r.all_packages();
-        assert!(ps
-            .iter()
-            .any(|p| *p.name() == pname("p1") && *p.version() == pversion("1")));
+        assert!(
+            ps.iter()
+                .any(|p| *p.name() == pname("p1") && *p.version() == pversion("1"))
+        );
         assert!(ps.iter().any(|p| *p.name() == pname("p2")));
         assert!(ps.iter().any(|p| *p.name() == pname("p3")));
         assert!(ps.iter().any(|p| *p.name() == pname("p4")));

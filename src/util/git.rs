@@ -8,9 +8,9 @@
 // SPDX-License-Identifier: EPL-2.0
 //
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use git2::Repository;
 use tracing::trace;
 

@@ -17,21 +17,21 @@ use std::process::ExitCode;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use colored::Colorize;
+use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use diesel::r2d2::Pool;
-use diesel::PgConnection;
 use git2::Repository;
 use indicatif::ProgressBar;
 use itertools::Itertools;
 use resiter::FilterMap;
+use tokio::sync::RwLock;
 use tokio::sync::mpsc::Receiver;
 use tokio::sync::mpsc::Sender;
-use tokio::sync::RwLock;
 use tokio_stream::StreamExt;
 use tokio_util::sync::CancellationToken;
 use tracing::Instrument;
@@ -51,8 +51,8 @@ use crate::job::JobDefinition;
 use crate::job::RunnableJob;
 use crate::orchestrator::util::*;
 use crate::source::SourceCache;
-use crate::util::progress::ProgressBars;
 use crate::util::EnvironmentVariableName;
+use crate::util::progress::ProgressBars;
 
 const CONTAINER_ID_LENGTH: usize = 7;
 

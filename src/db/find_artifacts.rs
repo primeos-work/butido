@@ -14,30 +14,30 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use chrono::NaiveDateTime;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::Pool;
 use diesel::BoolExpressionMethods;
 use diesel::ExpressionMethods;
 use diesel::JoinOnDsl;
 use diesel::PgConnection;
 use diesel::QueryDsl;
 use diesel::RunQueryDsl;
+use diesel::r2d2::ConnectionManager;
+use diesel::r2d2::Pool;
 use resiter::AndThen;
 use resiter::FilterMap;
 use tracing::{debug, trace};
 
 use crate::config::Configuration;
 use crate::db::models as dbmodels;
-use crate::filestore::path::ArtifactPath;
-use crate::filestore::path::FullArtifactPath;
 use crate::filestore::ReleaseStore;
 use crate::filestore::StagingStore;
+use crate::filestore::path::ArtifactPath;
+use crate::filestore::path::FullArtifactPath;
 use crate::package::Package;
 use crate::package::ScriptBuilder;
 use crate::package::Shebang;
 use crate::schema;
-use crate::util::docker::ImageName;
 use crate::util::EnvironmentVariableName;
+use crate::util::docker::ImageName;
 
 /// Find an artifact by a job description
 ///

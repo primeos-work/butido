@@ -11,20 +11,20 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use colored::Colorize;
+use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use diesel::r2d2::Pool;
-use diesel::PgConnection;
 use getset::{CopyGetters, Getters};
 use indicatif::ProgressBar;
 use itertools::Itertools;
 use tokio::io::AsyncWriteExt;
-use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::sync::RwLock;
+use tokio::sync::mpsc::UnboundedReceiver;
 use tracing::{debug, error, info, trace};
 use uuid::Uuid;
 

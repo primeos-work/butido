@@ -10,8 +10,8 @@
 
 use std::path::Component;
 
-use anyhow::anyhow;
 use anyhow::Result;
+use anyhow::anyhow;
 
 /// Helper type for filtering for paths we need or don't need
 ///

@@ -10,9 +10,9 @@
 
 use std::fmt::Debug;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use futures::stream::Stream;
 use indicatif::ProgressBar;
 use tracing::trace;

@@ -12,8 +12,8 @@
 
 use std::path::Path;
 
-use anyhow::anyhow;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 
 use crate::config::*;

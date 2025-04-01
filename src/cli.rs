@@ -10,11 +10,11 @@
 
 use std::path::PathBuf;
 
-use clap::crate_authors;
 use clap::Arg;
 use clap::ArgAction;
 use clap::ArgGroup;
 use clap::Command;
+use clap::crate_authors;
 
 use tracing::{debug, error};
 

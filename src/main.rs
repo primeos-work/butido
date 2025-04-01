@@ -47,10 +47,10 @@ extern crate diesel;
 
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use aquamarine as _;
 use clap::ArgMatches;
 use rustversion as _; // This crate is (occasionally) required (e.g., when we need version specific Clippy overrides)
@@ -304,8 +304,8 @@ async fn main() -> Result<()> {
 }
 
 fn generate_completions(matches: &ArgMatches) {
-    use clap_complete::generate;
     use clap_complete::Shell;
+    use clap_complete::generate;
 
     fn print_completions(shell: Shell, cmd: &mut clap::Command) {
         eprintln!("Generating shell completions for {shell}...");

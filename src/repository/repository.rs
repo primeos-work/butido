@@ -13,10 +13,10 @@ use std::path::Component;
 use std::path::Path;
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use regex::Regex;
 use tracing::trace;
 
@@ -255,7 +255,9 @@ impl Repository {
                 (None, None, Some(regex)) => anyhow::bail!("{} regex not found", regex),
 
                 (_, _, _) => {
-                    panic!("This should not be possible, either we select packages by name and (optionally) version, or by regex.")
+                    panic!(
+                        "This should not be possible, either we select packages by name and (optionally) version, or by regex."
+                    )
                 }
             }
         }

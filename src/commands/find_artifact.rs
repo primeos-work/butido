@@ -18,16 +18,16 @@ use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
 use clap::ArgMatches;
+use diesel::PgConnection;
 use diesel::r2d2::ConnectionManager;
 use diesel::r2d2::Pool;
-use diesel::PgConnection;
 use itertools::Itertools;
 use tracing::{debug, trace};
 
 use crate::config::Configuration;
-use crate::filestore::path::StoreRoot;
 use crate::filestore::ReleaseStore;
 use crate::filestore::StagingStore;
+use crate::filestore::path::StoreRoot;
 use crate::package::PackageVersionConstraint;
 use crate::repository::Repository;
 use crate::util::docker::ImageNameLookup;

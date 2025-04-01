@@ -12,10 +12,10 @@ use std::ffi::OsStr;
 use std::path::Path;
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use resiter::AndThen;
 use resiter::Filter;
 use resiter::Map;
@@ -196,7 +196,7 @@ impl<'a> FullArtifactPath<'a> {
     }
 
     pub fn joined(&self) -> PathBuf {
-        self.0 .0.join(&self.1 .0)
+        self.0.0.join(&self.1.0)
     }
 
     pub fn display(&self) -> FullArtifactPathDisplay<'a> {

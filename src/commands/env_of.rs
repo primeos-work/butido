@@ -36,8 +36,7 @@ pub async fn env_of(matches: &ArgMatches, repo: Repository) -> Result<()> {
             .unwrap()?;
         trace!(
             "Checking for package with name = {} and version = {:?}",
-            name,
-            version
+            name, version
         );
 
         crate::util::filters::build_package_filter_by_name(name).and(

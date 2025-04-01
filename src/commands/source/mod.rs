@@ -13,10 +13,10 @@
 use std::io::Write;
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 use colored::Colorize;
 use tokio_stream::StreamExt;

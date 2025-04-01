@@ -11,10 +11,10 @@
 use crate::filestore::path::ArtifactPath;
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 

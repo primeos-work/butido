@@ -10,9 +10,9 @@
 
 use std::process::ExitStatus;
 
-use anyhow::anyhow;
 use anyhow::Context as AnyhowContext;
 use anyhow::Result;
+use anyhow::anyhow;
 use handlebars::{
     Context, Handlebars, Helper, HelperDef, HelperResult, JsonRender, Output, PathAndJson,
     RenderContext, RenderErrorReason,
@@ -22,7 +22,7 @@ use serde::Serialize;
 use syntect::easy::HighlightLines;
 use syntect::highlighting::ThemeSet;
 use syntect::parsing::SyntaxSet;
-use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
+use syntect::util::{LinesWithEndings, as_24_bit_terminal_escaped};
 use tokio::process::Command;
 use tracing::trace;
 

@@ -20,8 +20,8 @@ use futures::TryStreamExt;
 use pom::parser::Parser as PomParser;
 use shiplift::tty::TtyChunk;
 
-use crate::log::util::*;
 use crate::log::LogItem;
+use crate::log::util::*;
 
 type IoResult<T> = RResult<T, futures::io::Error>;
 

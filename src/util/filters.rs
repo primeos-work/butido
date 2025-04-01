@@ -30,8 +30,7 @@ pub fn build_package_filter_by_dependency_name(
     let filter_build_dep = move |p: &Package| -> Result<bool> {
         trace!(
             "Checking whether any build dependency of {:?} is '{}'",
-            p,
-            n
+            p, n
         );
         Ok({
             check_build_dep
@@ -52,8 +51,7 @@ pub fn build_package_filter_by_dependency_name(
     let filter_rt_dep = move |p: &Package| -> Result<bool> {
         trace!(
             "Checking whether any runtime dependency of {:?} is '{}'",
-            p,
-            n
+            p, n
         );
         Ok({
             check_runtime_dep
@@ -95,8 +93,7 @@ pub fn build_package_filter_by_version_constraint(
     move |p: &Package| {
         trace!(
             "Checking {:?} -> version matches constraint: {:?}",
-            p,
-            version_constraint
+            p, version_constraint
         );
         version_constraint
             .as_ref()
@@ -113,11 +110,11 @@ mod tests {
 
     use resiter::Filter;
 
+    use crate::package::Dependencies;
+    use crate::package::Dependency;
     use crate::package::tests::package;
     use crate::package::tests::pname;
     use crate::package::tests::pversion;
-    use crate::package::Dependencies;
-    use crate::package::Dependency;
     use crate::repository::Repository;
 
     fn setup_logging() {

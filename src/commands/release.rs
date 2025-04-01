@@ -13,10 +13,10 @@
 use std::io::Write;
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 use diesel::prelude::*;
 use resiter::AndThen;
@@ -24,8 +24,8 @@ use tokio_stream::StreamExt;
 use tracing::{debug, error, info, trace};
 
 use crate::config::Configuration;
-use crate::db::models as dbmodels;
 use crate::db::DbConnectionConfig;
+use crate::db::models as dbmodels;
 
 /// Implementation of the "release" subcommand
 pub async fn release(

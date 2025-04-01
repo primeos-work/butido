@@ -17,14 +17,14 @@ use petgraph::dot::Dot;
 use resiter::AndThen;
 
 use crate::config::Configuration;
-use crate::package::condition::ConditionData;
 use crate::package::Dag;
 use crate::package::DependencyType;
 use crate::package::PackageName;
 use crate::package::PackageVersionConstraint;
+use crate::package::condition::ConditionData;
 use crate::repository::Repository;
-use crate::util::docker::ImageNameLookup;
 use crate::util::EnvironmentVariableName;
+use crate::util::docker::ImageNameLookup;
 
 /// Implementation of the "tree_of" subcommand
 pub async fn tree_of(matches: &ArgMatches, repo: Repository, config: &Configuration) -> Result<()> {

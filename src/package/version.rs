@@ -10,10 +10,10 @@
 
 use std::ops::Deref;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use once_cell::sync::Lazy;
 use pom::parser::Parser as PomParser;
 use regex::Regex;

@@ -12,9 +12,9 @@
 
 use std::borrow::Cow;
 
-use anyhow::anyhow;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 use shiplift::Container;
 use tokio_stream::StreamExt;

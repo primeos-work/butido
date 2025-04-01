@@ -16,18 +16,18 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::Arc;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 use colored::Colorize;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::Pool;
 use diesel::ExpressionMethods;
 use diesel::PgConnection;
 use diesel::QueryDsl;
 use diesel::RunQueryDsl;
+use diesel::r2d2::ConnectionManager;
+use diesel::r2d2::Pool;
 use itertools::Itertools;
 use tokio::sync::RwLock;
 use tokio_stream::StreamExt;
@@ -37,23 +37,23 @@ use uuid::Uuid;
 
 use crate::config::*;
 use crate::db::models::{EnvVar, GitHash, Image, Job, Package, Submit};
-use crate::filestore::path::StoreRoot;
 use crate::filestore::ReleaseStore;
 use crate::filestore::StagingStore;
+use crate::filestore::path::StoreRoot;
 use crate::job::JobResource;
 use crate::log::LogItem;
 use crate::orchestrator::OrchestratorSetup;
-use crate::package::condition::ConditionData;
 use crate::package::Dag;
 use crate::package::PackageName;
 use crate::package::PackageVersion;
 use crate::package::Shebang;
+use crate::package::condition::ConditionData;
 use crate::repository::Repository;
 use crate::schema;
 use crate::source::SourceCache;
+use crate::util::EnvironmentVariableName;
 use crate::util::docker::ImageNameLookup;
 use crate::util::progress::ProgressBars;
-use crate::util::EnvironmentVariableName;
 
 /// Implementation of the "build" subcommand
 #[allow(clippy::too_many_arguments)]

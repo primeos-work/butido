@@ -75,9 +75,7 @@ pub async fn dependencies_of(
 
     trace!(
         "Printing packages with format = '{}', runtime: {}, build: {}",
-        format,
-        print_runtime_deps,
-        print_build_deps
+        format, print_runtime_deps, print_build_deps
     );
 
     let flags = crate::ui::PackagePrintFlags {

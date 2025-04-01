@@ -15,10 +15,10 @@ use std::io::IsTerminal;
 use std::io::Write;
 use std::path::Path;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Error;
 use anyhow::Result;
+use anyhow::anyhow;
 use clap::ArgMatches;
 use itertools::Itertools;
 use regex::Regex;
@@ -206,7 +206,7 @@ pub fn display_data<D: Display>(
         let mut ascii_table = ascii_table::AsciiTable::default();
         ascii_table.set_max_width(
             terminal_size::terminal_size()
-                .map(|tpl| tpl.0 .0 as usize) // an ugly interface indeed!
+                .map(|tpl| tpl.0.0 as usize) // an ugly interface indeed!
                 .unwrap_or(80),
         );
 

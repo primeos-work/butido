@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: EPL-2.0
 //
 
-use anyhow::anyhow;
 use anyhow::Result;
+use anyhow::anyhow;
 use lazy_static::lazy_static;
 use regex::Regex;
 

@@ -8,17 +8,17 @@
 // SPDX-License-Identifier: EPL-2.0
 //
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use getset::Getters;
 use serde::Deserialize;
 use std::path::PathBuf;
 
-use crate::config::util::*;
 use crate::config::Configuration;
 use crate::config::ContainerConfig;
 use crate::config::DockerConfig;
+use crate::config::util::*;
 use crate::package::PhaseName;
 
 // The configuration version must be increased each time breaking configuration changes are made
@@ -275,10 +275,10 @@ impl NotValidatedConfiguration {
 
 #[cfg(test)]
 mod tests {
+    use super::CONFIGURATION_VERSION;
+    use super::NotValidatedConfiguration;
     use super::check_compatibility;
     use super::load_changelog;
-    use super::NotValidatedConfiguration;
-    use super::CONFIGURATION_VERSION;
 
     use anyhow::Result;
 

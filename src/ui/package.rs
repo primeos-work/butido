@@ -11,9 +11,9 @@
 use std::borrow::Borrow;
 use std::collections::BTreeMap;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use handlebars::Handlebars;
 
 use crate::config::Configuration;

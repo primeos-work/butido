@@ -15,11 +15,11 @@ use std::path::Path;
 
 use anyhow::Error;
 use anyhow::Result;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::Pool;
 use diesel::PgConnection;
 use diesel::QueryDsl;
 use diesel::RunQueryDsl;
+use diesel::r2d2::ConnectionManager;
+use diesel::r2d2::Pool;
 use walkdir::WalkDir;
 
 use crate::config::Configuration;

@@ -8,9 +8,9 @@
 // SPDX-License-Identifier: EPL-2.0
 //
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use getset::Getters;
 use tracing::{debug, trace};
 use uuid::Uuid;
@@ -24,8 +24,8 @@ use crate::package::Script;
 use crate::package::ScriptBuilder;
 use crate::source::SourceCache;
 use crate::source::SourceEntry;
-use crate::util::docker::ImageName;
 use crate::util::EnvironmentVariableName;
+use crate::util::docker::ImageName;
 
 /// A job configuration that can be run. All inputs are clear here.
 #[derive(Clone, Debug, Getters)]

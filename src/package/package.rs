@@ -12,9 +12,9 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use getset::Getters;
 use serde::Deserialize;
 use serde::Serialize;
@@ -25,8 +25,8 @@ use crate::package::source::*;
 use crate::package::version::*;
 use crate::package::{Phase, PhaseName};
 use crate::repository::normalize_relative_path;
-use crate::util::docker::ImageName;
 use crate::util::EnvironmentVariableName;
+use crate::util::docker::ImageName;
 
 #[derive(Clone, Serialize, Deserialize, Getters)]
 #[serde(deny_unknown_fields)]

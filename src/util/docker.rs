@@ -10,9 +10,9 @@
 
 use std::collections::HashMap;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -122,7 +122,9 @@ impl ImageNameLookup {
                 .collect::<Vec<_>>();
             available_images.sort_unstable();
             let available_images = available_images.join(",");
-            Err(anyhow!("Failed to resolve the requested container image name \"{image_name}\". The available images are: {available_images}"))
+            Err(anyhow!(
+                "Failed to resolve the requested container image name \"{image_name}\". The available images are: {available_images}"
+            ))
         }
     }
 

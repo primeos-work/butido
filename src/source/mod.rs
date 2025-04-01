@@ -10,9 +10,9 @@
 
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use anyhow::anyhow;
 use tracing::trace;
 use url::Url;
 

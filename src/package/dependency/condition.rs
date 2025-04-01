@@ -15,8 +15,8 @@ use getset::Getters;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::util::docker::ImageName;
 use crate::util::EnvironmentVariableName;
+use crate::util::docker::ImageName;
 
 /// The Condition type
 ///
